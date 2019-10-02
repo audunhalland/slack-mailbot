@@ -34,6 +34,7 @@ express()
     console.log('received body: ', req.body);
     try {
       const members = await getConversationMembers();
+      console.log('members: ', members);
     } catch (error) {
       console.error('problem with slack API: ', error);
     }
