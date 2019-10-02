@@ -95,6 +95,8 @@ const getMemberEmails = async (channel_id) => {
     getAllUsers()
   ]);
 
+  console.log(`member count: ${member_ids.length} user count: ${users.length}`);
+
   return users
     .filter(user => member_ids.indexOf(user.id) >= 0)
     .map(user => user.email)
