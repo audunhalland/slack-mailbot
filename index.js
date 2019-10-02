@@ -12,7 +12,7 @@ const SLACK_SIGNING_SECRET = process.env.SLACK_SIGNING_SECRET || '';
 const SLACK_OAUTH_ACCESS_TOKEN = process.env.SLACK_OAUTH_ACCESS_TOKEN || '';
 const SLACK_BOT_USER_OAUTH_ACCESS_TOKEN = process.env.SLACK_BOT_USER_OAUTH_ACCESS_TOKEN || '';
 
-const slackOutoingConfig = {
+const slackOutgoingConfig = {
   headers: {
     'Content-Type': 'application/x-www-form-urlencoded',
   }
