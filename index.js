@@ -33,17 +33,71 @@ const authTest = async (token) => {
   console.log('auth test response: ', response.data);
 };
 
-const getConversationMembers = async (channelId, token) => {
+const getConversationMembers = async (channelId, cursor) => {
   const requestBody = {
     channel: channelId,
     token: SLACK_BOT_USER_OAUTH_ACCESS_TOKEN,
+    limit: 200,
+    ...cursor && { cursor },
   };
   const response = await axios({
     url: `https://slack.com/api/conversations.members?${qs.stringify(requestBody)}`,
     method: 'GET',
   });
-  const data = response.data;
-  return data;
+  return response.data;
+};
+
+const getAllConversationMemberIds = async (channelId) => {
+  let all_members = [];
+  let cursor = '';
+  while (true) {
+    const { members, response_metadata } = await getConversationMembers(channelId, cursor);
+    all_members = all_members.concat(members);
+    if (!response_metadata.next_cursor) return all_members;
+    cursor = response_metadata.next_cursor;
+  }
+};
+
+const getUsers = async (cursor) => {
+  const requestBody = {
+    token: SLACK_BOT_USER_OAUTH_ACCESS_TOKEN,
+    limit: 200,
+    ...cursor && { cursor },
+  }
+  const response = await axios({
+    url: `https://slack.com/api/users.list?${qs.stringify(requestBody)}`,
+    method: 'GET',
+  });
+  return response.data;
+};
+
+const getAllUsers = async () => {
+  let all_users = [];
+  let cursor = '';
+  while (true) {
+    const { members, response_metadata } = await getUsers(cursor);
+    all_users = all_users.concat(
+      members.map(member => (
+        {
+          id: member.id,
+          email: member.profile.email,
+        }
+      ))
+    );
+    if (!response_metadata.next_cursor) return all_users;
+    cursor = response_metadata.next_cursor;
+  }
+};
+
+const getMemberEmails = async () => {
+  const [member_ids, users] = await Promise.all([
+    getAllConversationMemberIds(channel_id),
+    getAllUsers()
+  ]);
+
+  return users
+    .filter(user => member_ids.indexOf(user.id) >= 0)
+    .map(user => user.email);
 };
 
 express()
@@ -66,8 +120,8 @@ express()
     } = req.body;
     await authTest();
     try {
-      const members = await getConversationMembers(channel_id, token);
-      console.log('members: ', members);
+      const emails = await getMemberEmails();
+      console.log('emails: ', emails);
     } catch (error) {
       console.error('problem with slack API: ', error);
     }
