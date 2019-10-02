@@ -97,7 +97,8 @@ const getMemberEmails = async (channel_id) => {
 
   return users
     .filter(user => member_ids.indexOf(user.id) >= 0)
-    .map(user => user.email);
+    .map(user => user.email)
+    .filter(email => !!email)
 };
 
 express()
