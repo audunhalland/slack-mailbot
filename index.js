@@ -22,7 +22,7 @@ const getConversationMembers = async (channelId) => {
   const requestBody = {
     channel: channelId,
   };
-  const response = await axios.get('https://slack.com/api/conversations.members', qs.stringify(requestBody), slackOutoingOptions);
+  const response = await axios.get('https://slack.com/api/conversations.members', qs.stringify(requestBody), slackOutgoingConfig);
   return response;
 };
 
