@@ -12,6 +12,10 @@ const SLACK_SIGNING_SECRET = process.env.SLACK_SIGNING_SECRET || '';
 const SLACK_OAUTH_ACCESS_TOKEN = process.env.SLACK_OAUTH_ACCESS_TOKEN || '';
 const SLACK_BOT_USER_OAUTH_ACCESS_TOKEN = process.env.SLACK_BOT_USER_OAUTH_ACCESS_TOKEN || '';
 
+const slackHeaderFormUrlEncoded = {
+  'Content-Type': 'application/x-www-form-urlencoded',
+};
+
 const slackOutgoingConfig = {
   headers: {
     'Content-Type': 'application/x-www-form-urlencoded',
@@ -35,10 +39,8 @@ const getConversationMembers = async (channelId, token) => {
     token: SLACK_BOT_USER_OAUTH_ACCESS_TOKEN,
   };
   const response = await axios({
-    url: 'https://slack.com/api/conversations.members',
+    url: `https://slack.com/api/conversations.members?${qs.stringify(requestBody)}`,
     method: 'GET',
-    data: qs.stringify(requestBody),
-    ...slackOutgoingConfig,
   });
   const data = response.data;
   return data;
