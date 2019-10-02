@@ -21,7 +21,7 @@ const slackOutgoingConfig = {
 const getConversationMembers = async (channelId, token) => {
   const requestBody = {
     channel: channelId,
-    token: token,
+    token: SLACK_BOT_USER_OAUTH_ACCESS_TOKEN,
   };
   const response = await axios.get('https://slack.com/api/conversations.members', qs.stringify(requestBody), slackOutgoingConfig);
   const data = response.data;
