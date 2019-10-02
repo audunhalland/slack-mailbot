@@ -119,13 +119,13 @@ express()
       response_url,
       trigger_id,
     } = req.body;
-    await authTest();
+    //await authTest();
     try {
       const emails = await getMemberEmails(channel_id);
-      console.log('emails: ', emails);
+      res.send(emails.join(', '));
     } catch (error) {
       console.error('problem with slack API: ', error);
+      res.send(`Trøbbel på serveren :(`);
     }
-    res.send(`my bot with id ${SLACK_CLIENT_ID}`);
   })
   .listen(PORT, () => console.log(`Listening on ${ PORT }`));
