@@ -18,12 +18,14 @@ const slackOutgoingConfig = {
   }
 };
 
-const getConversationMembers = async (channelId) => {
+const getConversationMembers = async (channelId, token) => {
   const requestBody = {
     channel: channelId,
+    token: token,
   };
   const response = await axios.get('https://slack.com/api/conversations.members', qs.stringify(requestBody), slackOutgoingConfig);
-  return response;
+  const data = response.data;
+  return data;
 };
 
 express()
@@ -31,9 +33,21 @@ express()
     res.send(`my bot with id ${SLACK_CLIENT_ID}`);
   })
   .post('/email-addresses', bodyParser.urlencoded({ extended: false }), async (req, res) => {
-    console.log('received body: ', req.body);
+    const {
+      token,
+      team_id,
+      team_domain,
+      channel_id,
+      channel_name,
+      user_id,
+      user_name,
+      command,
+      text,
+      response_url,
+      trigger_id,
+    } = req.body;
     try {
-      const members = await getConversationMembers();
+      const members = await getConversationMembers(channel_id, token);
       console.log('members: ', members);
     } catch (error) {
       console.error('problem with slack API: ', error);
