@@ -81,6 +81,7 @@ const getAllUsers = async () => {
         {
           id: member.id,
           email: member.profile.email,
+          name: member.name,
           real_name: member.profile.real_name,
         }
       ))
@@ -135,7 +136,7 @@ express()
         .filter(user => !user.email);
 
       if (usersWithoutEmail.length > 0) {
-        const errorUserNames = usersWithoutEmail.map(user => user.real_name);
+        const errorUserNames = usersWithoutEmail.map(user => `@${user.name}`);
         res.send(`${emails.join(', ')}   -- Could not find email address for ${errorUserNames.join(', ')}.`);
       } else {
         res.send(emails.join(', '));
