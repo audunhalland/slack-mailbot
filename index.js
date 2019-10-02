@@ -144,15 +144,17 @@ express()
       const usersWithoutEmail = users
         .filter(user => !user.email);
 
+      const emailString = `addresses for members in this conversation: ${emails.join(', ')}`;
+
       if (usersWithoutEmail.length > 0) {
         const errorUserNames = usersWithoutEmail
           .filter(user => user.name)
           .map(user => `@${user.name}`);
         const usersWithoutName = usersWithoutEmail
           .filter(user => !user.name);
-        res.send(`${emails.join(', ')}   -- Could not find email address for ${errorUserNames.join(', ')}. ${usersWithoutName.length} users missing profile info`);
+        res.send(`${emailString} -- Could not find email address for ${errorUserNames.join(', ')}. ${usersWithoutName.length} users missing profile info`);
       } else {
-        res.send(emails.join(', '));
+        res.send(emailString);
       }
     } catch (error) {
       console.error('problem with slack API: ', error);
