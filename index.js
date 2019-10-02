@@ -19,6 +19,16 @@ const slackOutgoingConfig = {
   }
 };
 
+const authTest = async (token) => {
+  const response = await axios({
+    url: 'https://slack.com/api/auth.test',
+    method: 'GET',
+    data: qs.stringify({}),
+    ...slackOutgoingConfig,
+  });
+  console.log('auth test response: ', response.data);
+};
+
 const getConversationMembers = async (channelId, token) => {
   const requestBody = {
     channel: channelId,
@@ -52,6 +62,7 @@ express()
       response_url,
       trigger_id,
     } = req.body;
+    await authTest();
     try {
       const members = await getConversationMembers(channel_id, token);
       console.log('members: ', members);
