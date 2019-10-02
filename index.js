@@ -15,6 +15,7 @@ const SLACK_BOT_USER_OAUTH_ACCESS_TOKEN = process.env.SLACK_BOT_USER_OAUTH_ACCES
 const slackOutgoingConfig = {
   headers: {
     'Content-Type': 'application/x-www-form-urlencoded',
+    'Authorization': `Bearer ${SLACK_OAUTH_ACCESS_TOKEN}`,
   }
 };
 
