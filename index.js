@@ -15,7 +15,7 @@ const SLACK_BOT_USER_OAUTH_ACCESS_TOKEN = process.env.SLACK_BOT_USER_OAUTH_ACCES
 const slackOutgoingConfig = {
   headers: {
     'Content-Type': 'application/x-www-form-urlencoded',
-    'Authorization': `Bearer ${SLACK_OAUTH_ACCESS_TOKEN}`,
+    'Authorization': `Bearer ${SLACK_BOT_USER_OAUTH_ACCESS_TOKEN}`,
   }
 };
 
@@ -32,7 +32,7 @@ const authTest = async (token) => {
 const getConversationMembers = async (channelId, token) => {
   const requestBody = {
     channel: channelId,
-    token: SLACK_OAUTH_ACCESS_TOKEN,
+    token: SLACK_BOT_USER_OAUTH_ACCESS_TOKEN,
   };
   const response = await axios({
     url: 'https://slack.com/api/conversations.members',
