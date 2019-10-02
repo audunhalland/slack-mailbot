@@ -89,7 +89,7 @@ const getAllUsers = async () => {
   }
 };
 
-const getMemberEmails = async () => {
+const getMemberEmails = async (channel_id) => {
   const [member_ids, users] = await Promise.all([
     getAllConversationMemberIds(channel_id),
     getAllUsers()
@@ -120,7 +120,7 @@ express()
     } = req.body;
     await authTest();
     try {
-      const emails = await getMemberEmails();
+      const emails = await getMemberEmails(channel_id);
       console.log('emails: ', emails);
     } catch (error) {
       console.error('problem with slack API: ', error);
