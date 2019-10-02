@@ -53,7 +53,7 @@ const getAllConversationMemberIds = async (channelId) => {
   while (true) {
     const { members, response_metadata } = await getConversationMembers(channelId, cursor);
     all_members = all_members.concat(members);
-    if (!response_metadata.next_cursor) return all_members;
+    if (!response_metadata || !response_metadata.next_cursor) return all_members;
     cursor = response_metadata.next_cursor;
   }
 };
@@ -86,7 +86,7 @@ const getAllUsers = async () => {
         }
       ))
     );
-    if (!response_metadata.next_cursor) return all_users;
+    if (!response_metadata || !response_metadata.next_cursor) return all_users;
     cursor = response_metadata.next_cursor;
   }
 };
