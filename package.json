@@ -1,0 +1,13 @@
+{
+  "name": "knowit-slack-mailbot",
+  "version": "0.1.0",
+  "main": "index.js",
+  "author": "Audun Halland <audun.halland@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
