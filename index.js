@@ -105,7 +105,16 @@ const getConversationUsers = async (channel_id) => {
   }), {});
 
   return member_ids
-    .map(member_id => usersById[member_id]);
+    .map(member_id => {
+      const user = usersById[member_id];
+      if (user) return user;
+      return {
+        id: member_id,
+        email: null,
+        name: null,
+        real_name: null,
+      };
+    });
 };
 
 express()
@@ -136,8 +145,12 @@ express()
         .filter(user => !user.email);
 
       if (usersWithoutEmail.length > 0) {
-        const errorUserNames = usersWithoutEmail.map(user => `@${user.name}`);
-        res.send(`${emails.join(', ')}   -- Could not find email address for ${errorUserNames.join(', ')}.`);
+        const errorUserNames = usersWithoutEmail
+          .filter(user => user.name)
+          .map(user => `@${user.name}`);
+        const usersWithoutName = usersWithoutEmail
+          .filter(user => !user.name);
+        res.send(`${emails.join(', ')}   -- Could not find email address for ${errorUserNames.join(', ')}. ${usersWithoutName.length} users missing profile info`);
       } else {
         res.send(emails.join(', '));
       }
