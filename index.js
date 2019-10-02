@@ -81,6 +81,7 @@ const getAllUsers = async () => {
         {
           id: member.id,
           email: member.profile.email,
+          real_name: member.profile.real_name,
         }
       ))
     );
@@ -89,7 +90,7 @@ const getAllUsers = async () => {
   }
 };
 
-const getMemberEmails = async (channel_id) => {
+const getConversationUsers = async (channel_id) => {
   const [member_ids, users] = await Promise.all([
     getAllConversationMemberIds(channel_id),
     getAllUsers()
@@ -97,10 +98,13 @@ const getMemberEmails = async (channel_id) => {
 
   console.log(`member count: ${member_ids.length} user count: ${users.length}`);
 
-  return users
-    .filter(user => member_ids.indexOf(user.id) >= 0)
-    .map(user => user.email)
-    .filter(email => !!email)
+  const usersById = users.reduce((agg, user) => ({
+    ...agg,
+    [user.id]: user,
+  }), {});
+
+  return member_ids
+    .map(member_id => usersById[member_id]);
 };
 
 express()
@@ -123,8 +127,19 @@ express()
     } = req.body;
     //await authTest();
     try {
-      const emails = await getMemberEmails(channel_id);
-      res.send(emails.join(', '));
+      const users = await getConversationUsers(channel_id);
+      const emails = users
+        .map(user => user.email)
+        .filter(email => !!email);
+      const usersWithoutEmail = users
+        .filter(user => !user.email);
+
+      if (usersWithoutEmail.length > 0) {
+        const errorUserNames = usersWithoutEmail.map(user => user.real_name);
+        res.send(`${emails.join(', ')}   -- Could not find email address for ${errorUserNames.join(', ')}.`);
+      } else {
+        res.send(emails.join(', '));
+      }
     } catch (error) {
       console.error('problem with slack API: ', error);
       res.send(`Trøbbel på serveren :(`);
